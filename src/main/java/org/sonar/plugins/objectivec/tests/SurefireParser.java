@@ -193,12 +193,21 @@ public class SurefireParser {
 
     public Resource getUnitTestResource(String classname) {
 
-        String fileName = classname.replace('.', '/') + ".m";
+        String baseFileName = classname.replace('.', '/');
+        String mFileName = baseFileName  + ".m";
 
-        InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().or(fileSystem.predicates().matchesPathPattern("**/" + fileName),
-                fileSystem.predicates().matchesPathPattern("**/" + fileName.replace("_", "+"))));
+        InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().or(fileSystem.predicates().matchesPathPattern("**/" + mFileName),
+                fileSystem.predicates().matchesPathPattern("**/" + mFileName.replace("_", "?"))));
+
         if (inputFile == null) {
-            return null;
+            String mmFileName = baseFileName  + ".mm";
+
+            inputFile = fileSystem.inputFile(fileSystem.predicates().or(fileSystem.predicates().matchesPathPattern("**/" + mmFileName),
+                    fileSystem.predicates().matchesPathPattern("**/" + mmFileName.replace("_", "?"))));
+
+            if (inputFile == null) {
+                return null;
+            }
         }
 
         Resource resource = context.getResource(inputFile);
